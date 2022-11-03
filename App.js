@@ -1,4 +1,4 @@
-import React, {useContext, createContext, useEffect, useState } from 'react';
+import React, { useContext, createContext, useEffect, useState } from 'react';
 import { Text, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,7 +14,7 @@ const CounterProvider = ({ children }) => {
   const increment = () => setCounter((c) => c + 1);
   const decrement = () => setCounter((c) => c - 1);
 
-  useEffect( () => {
+  useEffect(() => {
     AsyncStorage.setItem('counter', counter.toString());
   }, [counter]); // only run when counter changes
 
@@ -34,22 +34,16 @@ const CounterProvider = ({ children }) => {
 }
 
 
-function App() {
-  const { count, increment, decrement } = useCounter();
+export default function App() {
+  const { counter, increment, decrement } = useCounter();
 
   return (
-    <View>
-      <Text>{count}</Text>
-      <Button title="Increment" onPress={increment} />
-      <Button title="Decrement" onPress={decrement} />
-    </View>
-    
+    <CounterProvider>
+      <View>
+        <Text>{counter}</Text>
+        <Button title="Increment" onPress={increment} />
+        <Button title="Decrement" onPress={decrement} />
+      </View>
+    </CounterProvider>
   );
 }
-
-export default () => {
-  <CounterProvider>
-    <App />
-  </CounterProvider>;
-}
-
