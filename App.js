@@ -1,20 +1,55 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useContext, createContext, useEffect, useState } from 'react';
+import { Text, View, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function App() {
+const CounterContext = createContext(0);
+
+const useCounter = () => {
+  useContext(CounterContext);
+};
+
+const CounterProvider = ({ children }) => {
+  const [counter, setCounter] = useState(0);
+
+  const increment = () => setCounter((c) => c + 1);
+  const decrement = () => setCounter((c) => c - 1);
+
+  useEffect( () => {
+    AsyncStorage.setItem('counter', counter.toString());
+  }, [counter]); // only run when counter changes
+
+  useEffect(() => {
+    AsyncStorage.getItem('counter').then((counter) => {
+      if (counter) {
+        setCounter(parseInt(counter));
+      }
+    });
+  }, []); // <-- empty array means "run this only once"
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <CounterContext.Provider value={{ counter, increment, decrement }}>
+      {children}
+    </CounterContext.Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+function App() {
+  const { count, increment, decrement } = useCounter();
+
+  return (
+    <View>
+      <Text>{count}</Text>
+      <Button title="Increment" onPress={increment} />
+      <Button title="Decrement" onPress={decrement} />
+    </View>
+    
+  );
+}
+
+export default () => {
+  <CounterProvider>
+    <App />
+  </CounterProvider>;
+}
+
