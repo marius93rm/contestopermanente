@@ -2,12 +2,13 @@ import React, { useContext, createContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CounterContext = createContext(0);
+const CounterContext = createContext("contatore");
 
 const CounterProvider = ({ children }) => {
   const [counter, setCounter] = useState(0);
 
   const test = () => {
+    console.log("test");
     Alert.alert('test');
   };
   const increment = () => setCounter((c) => c + 1);
@@ -33,7 +34,12 @@ const CounterProvider = ({ children }) => {
 }
 
 export default function App() {
-  const { counter, increment, decrement, test } = useContext(CounterContext);
+  
+  const contesto = useContext(CounterContext);
+  const { counter, increment, decrement, test } = contesto;
+  
+  console.log(typeof(contesto))
+  console.log(contesto);
 
   return (
     <CounterProvider>
